@@ -1,10 +1,11 @@
 "use client";
 import { useState } from "react";
 import { FaRegEdit } from "react-icons/fa";
+import { SiTicktick } from "react-icons/si";
 
 function TodoApp() {
     // useState hooks for initial states
-    const [todos, setTodo] = useState<{ task: string; id: number }[]>([]);
+    const [todos, setTodos] = useState<{ task: string; id: number; completed: boolean }[]>([]);
     const [inputTask, setInput] = useState("");
     const [id, setId] = useState(1);
 
@@ -15,12 +16,14 @@ function TodoApp() {
         const foundTodo = todos.find(item => item.id === id); // Find the todo with the same ID
         if (foundTodo) {
             // Edit existing todo
-            const newArray = todos.map(item => item.id === id ? { task: inputTask, id } : item);
-            setTodo(newArray);
+            const newArray = todos.map(item =>
+                item.id === id ? { ...item, task: inputTask } : item
+            );
+            setTodos(newArray);
             setId(todos.length + 1); // Reset ID to prevent overwrite on new todo creation
         } else {
             // Add new todo
-            setTodo([...todos, { task: inputTask, id }]);
+            setTodos([...todos, { task: inputTask, id, completed: false }]);
             setId(id + 1); // Increment ID for the next todo
         }
         setInput("");
@@ -38,7 +41,14 @@ function TodoApp() {
     // Function to delete todo
     const deleteTodo = (id: number) => {
         const newArray = todos.filter(item => item.id !== id);
-        setTodo(newArray);
+        setTodos(newArray);
+    };
+
+    // Function to toggle completion status
+    const toggleComplete = (id: number) => {
+        setTodos(todos.map(item =>
+            item.id === id ? { ...item, completed: !item.completed } : item
+        ));
     };
 
     return (
@@ -49,6 +59,7 @@ function TodoApp() {
                     className="w-[80%] ml-3 shadow-md shadow-blue-500 text-lg bg-gray-200 hover:shadow-none text-gray-800 border-b focus:ring-2 px-4 focus:ring-blue-600 focus:outline-none rounded-full"
                     placeholder="Add some ToDo task...."
                     type="text"
+                    id="inputTask"
                     value={inputTask}
                     onChange={(e) => setInput(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && addTodo()} // Add todo on Enter key press
@@ -60,29 +71,47 @@ function TodoApp() {
             <h1 className="mt-10 text-center text-indigo-700 text-[40px] underline decoration-dotted">To-Do List</h1>
             <div className="grid grid-cols-2 gap-4 mt-5">
                 {todos.map((item, i) => (
-                  <div className="bg-gray-800 p-6 rounded-xl shadow-lg shadow-black relative text-white" key={item.id}>
-                  <div className="flex justify-between items-center mb-4">
-                    <span className="text-white rounded-full h-8 w-8 flex items-center justify-center font-bold">
-                      {i + 1}
-                    </span>
-                    <button
-                      className="text-red-400 text-2xl font-bold hover:text-red-500 transition duration-300"
-                      onClick={() => deleteTodo(item.id)}
-                    >
-                      &times;
-                    </button>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <h2 className="text-xl md:text-2xl font-semibold mb-4">{item.task}</h2>
-                    <button
-                      onClick={() => editTodo(item.id)}
-                      className="text-green-400 font-semibold hover:text-green-600 transition duration-300 self-end"
-                    >
-                      <FaRegEdit />
-                    </button>
-                  </div>
-                </div>
-                
+                    <div className="bg-gray-800 p-6 rounded-xl shadow-lg shadow-black relative text-white" key={item.id}>
+                        {/* Top Row: ID on the left, Delete (×) on the right */}
+                        <div className="flex justify-between items-start mb-4">
+                            <span className="text-white rounded-full h-8 w-8 flex items-center justify-center font-bold">
+                                {i + 1}
+                            </span>
+                            <button
+                                className="text-red-400 text-2xl font-bold hover:text-red-500 transition duration-300"
+                                onClick={() => deleteTodo(item.id)}
+                            >
+                                &times;
+                            </button>
+                        </div>
+
+                        {/* Task Description */}
+                        <h2 className={`text-xl md:text-2xl font-semibold mb-4 ${item.completed ? 'line-through link-warning' : ''}`}>
+                            {item.task}
+                        </h2>
+
+                        {/* Bottom Row: Tick and Edit Icons */}
+                        <div className="flex justify-between items-center">
+                            <button
+                                onClick={() => toggleComplete(item.id)}
+                                className="text-green-400 hover:text-green-500 transition duration-300"
+                            >
+                                <SiTicktick size={20} /> {/* Consistent size for tick icon */}
+                            </button>
+                            <button
+                                onClick={() => {
+                                    editTodo(item.id);
+                                    window.scrollTo({
+                                        top: 0,
+                                        behavior: 'smooth',
+                                    });
+                                }}
+                                className="text-green-400 hover:text-green-600 transition duration-300"
+                            >
+                                <FaRegEdit size={20} /> {/* Consistent size for edit icon */}
+                            </button>
+                        </div>
+                    </div>
                 ))}
             </div>
         </div>

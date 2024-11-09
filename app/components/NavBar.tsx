@@ -30,8 +30,8 @@ const Navbar: React.FC = () => {
 
   return (
     <div className="navbar bg-slate-800">
-      <div className="flex-1 ">
-        <a className="btn btn-ghost text-xl text-white sm:text-18">Muhammad Hammad ur Rehman</a>
+      <div className="flex-1">
+        <a className="btn btn-ghost text-xl text-white">Muhammad Hammad ur Rehman</a>
       </div>
       <div className="flex-none gap-2">
         <div className="dropdown dropdown-end relative" ref={dropdownRef}>
