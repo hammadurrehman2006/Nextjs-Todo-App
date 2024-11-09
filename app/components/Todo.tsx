@@ -12,10 +12,10 @@ function TodoApp() {
     const addTodo = () => {
         if (!inputTask.trim()) return; // Prevent adding if input is empty
 
-        let foundTodo = todos.find(item => item.id === id); // Find the todo with the same ID
+        const foundTodo = todos.find(item => item.id === id); // Find the todo with the same ID
         if (foundTodo) {
             // Edit existing todo
-            let newArray = todos.map(item => item.id === id ? { task: inputTask, id } : item);
+            const newArray = todos.map(item => item.id === id ? { task: inputTask, id } : item);
             setTodo(newArray);
             setId(todos.length + 1); // Reset ID to prevent overwrite on new todo creation
         } else {
@@ -28,7 +28,7 @@ function TodoApp() {
 
     // Function to edit todo
     const editTodo = (id: number) => {
-        let foundTodo = todos.find(item => item.id === id); // Find the todo
+        const foundTodo = todos.find(item => item.id === id); // Find the todo
         if (foundTodo) {
             setInput(foundTodo.task);
             setId(foundTodo.id);
